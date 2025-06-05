@@ -1,0 +1,12 @@
+[package]
+name = "orphy"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.98"
+reqwest = "0.12.19"
+tokio = { version = "1.45.1", features = ["macros", "rt-multi-thread"] }
+crossterm = "0.28.1"
+ratatui = "0.29.0"
+color-eyre = "0.6.3"
