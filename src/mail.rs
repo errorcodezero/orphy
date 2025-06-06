@@ -1,10 +1,24 @@
 use anyhow::Error;
+use chrono::prelude::*;
 use reqwest::Client;
+use serde_json::Value;
 
 pub struct MailClient {
     auth_token: String,
     base_url: String,
     client: Client,
+}
+
+#[derive(Default, Debug)]
+pub struct Letter {
+    pub id: Option<String>,
+    pub title: Option<String>,
+    pub letter_type: Option<String>,
+    pub public_url: Option<String>,
+    pub status: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
 // /api/public/v1/me
@@ -119,17 +133,85 @@ impl MailClient {
         Ok(body)
     }
 
-    pub async fn get_mail(&self) -> Result<String, Error> {
+    pub async fn get_mail(&self) -> Result<Option<Vec<Letter>>, Error> {
         let body = self
             .client
             .get(format!("{}/mail", self.base_url))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
+            .bearer_auth(&self.auth_token)
             .send()
             .await?
             .text()
             .await?;
 
-        Ok(body)
+        let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
+
+        if let Ok(data) = data {
+            println!("{:#?}", data);
+            let mut mail = Vec::new();
+
+            for letter in data.get("mail").unwrap().as_array().unwrap().iter() {
+                let id = if let Value::String(str) = &letter["id"] {
+                    Some(str.parse().unwrap())
+                } else {
+                    None
+                };
+                let title = if let Value::String(str) = &letter["title"] {
+                    Some(str.parse().unwrap())
+                } else {
+                    None
+                };
+                let created_at: Option<DateTime<Utc>> =
+                    if let Value::String(str) = &letter["created_at"] {
+                        Some(str.parse().unwrap())
+                    } else {
+                        None
+                    };
+                let updated_at: Option<DateTime<Utc>> =
+                    if let Value::String(str) = &letter["updated_at"] {
+                        Some(str.parse().unwrap())
+                    } else {
+                        None
+                    };
+                let public_url = if let Value::String(str) = &letter["public_url"] {
+                    Some(str.parse().unwrap())
+                } else {
+                    None
+                };
+                let letter_type = if let Value::String(str) = &letter["type"] {
+                    Some(str.parse().unwrap())
+                } else {
+                    None
+                };
+                let status = if let Value::String(str) = &letter["status"] {
+                    Some(str.parse().unwrap())
+                } else {
+                    None
+                };
+                let tags = if let Value::Array(tags) = &letter["tags"] {
+                    let mut tags_final = Vec::<String>::new();
+                    for tag in tags.iter() {
+                        tags_final.push(tag.to_string());
+                    }
+                    Some(tags_final)
+                } else {
+                    None
+                };
+
+                mail.push(Letter {
+                    id,
+                    title,
+                    created_at,
+                    updated_at,
+                    public_url,
+                    status,
+                    tags,
+                    letter_type,
+                });
+            }
+            Ok(Some(mail))
+        } else {
+            Ok(None)
+        }
     }
 }
 
