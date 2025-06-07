@@ -7,8 +7,5 @@ pub enum Cli {
         #[arg(short, long)]
         id: String,
     },
-    Package {
-        #[arg(short, long)]
-        id: String,
-    },
+    Fetch,
 }

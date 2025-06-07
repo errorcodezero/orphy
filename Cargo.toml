@@ -12,3 +12,4 @@ anyhow = "1.0.98"
 clap = { version = "4.5.39", features = ["derive"] }
 chrono = "0.4.41"
 tokio = { version = "1.45.1", features = ["macros", "rt-multi-thread"] }
+cli-table = "0.5"

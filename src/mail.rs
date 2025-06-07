@@ -9,6 +9,8 @@ pub struct MailClient {
     client: Client,
 }
 
+// All of these are options cus letters don't follow a strict schema and sometimes are missing half
+// the details
 #[derive(Default, Debug)]
 pub struct Letter {
     pub id: Option<String>,
@@ -19,6 +21,17 @@ pub struct Letter {
     pub tags: Option<Vec<String>>,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
+    pub events: Option<Vec<Event>>,
+}
+
+// These don't seem to follow as much of an optional schema but i'm putting it here just in case
+#[derive(Default, Debug)]
+pub struct Event {
+    pub happened_at: Option<DateTime<Utc>>,
+    pub source: Option<String>,
+    pub facility: Option<String>,
+    pub description: Option<String>,
+    pub location: Option<String>,
 }
 
 // /api/public/v1/me
@@ -38,99 +51,114 @@ impl MailClient {
         }
     }
 
-    pub async fn get_lsv(&self) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/lsv", self.base_url))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
+    fn event_from_data(&self, event: &Value) -> Event {
+        let happened_at: Option<DateTime<Utc>> = if let Value::String(str) = &event["happened_at"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
 
-        Ok(body)
+        let description = if let Value::String(str) = &event["description"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+
+        let location = if let Value::String(str) = &event["location"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+
+        let facility = if let Value::String(str) = &event["facility"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+
+        let source = if let Value::String(str) = &event["source"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+
+        Event {
+            happened_at,
+            description,
+            location,
+            facility,
+            source,
+        }
     }
 
-    pub async fn get_lsv_with_type_and_id(
-        &self,
-        id: String,
-        lsv_type: String,
-    ) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/lsv/{}/{}", self.base_url, lsv_type, id))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
+    fn letter_from_data(&self, letter: &Value) -> Letter {
+        let id = if let Value::String(str) = &letter["id"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let title = if let Value::String(str) = &letter["title"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let created_at: Option<DateTime<Utc>> = if let Value::String(str) = &letter["created_at"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let updated_at: Option<DateTime<Utc>> = if let Value::String(str) = &letter["updated_at"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let public_url = if let Value::String(str) = &letter["public_url"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let letter_type = if let Value::String(str) = &letter["type"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let status = if let Value::String(str) = &letter["status"] {
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let tags = if let Value::Array(tags) = &letter["tags"] {
+            let mut tags_final = Vec::<String>::new();
+            for tag in tags.iter() {
+                tags_final.push(tag.to_string());
+            }
+            Some(tags_final)
+        } else {
+            None
+        };
 
-        Ok(body)
-    }
+        let events = if let Value::Array(events) = &letter["events"] {
+            let mut events_final: Vec<Event> = Vec::new();
+            for event in events {
+                events_final.push(self.event_from_data(event));
+            }
 
-    pub async fn get_package_with_id(&self, id: String) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/packages/{}", self.base_url, id))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
+            Some(events_final)
+        } else {
+            None
+        };
 
-        Ok(body)
-    }
-
-    pub async fn get_packages(&self) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/packages", self.base_url))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
-
-        Ok(body)
-    }
-
-    pub async fn get_letter_with_id(&self, id: String) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/letters/{}", self.base_url, id))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
-
-        Ok(body)
-    }
-
-    pub async fn get_letters(&self) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/letters", self.base_url))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
-
-        Ok(body)
-    }
-
-    pub async fn get_me(&self) -> Result<String, Error> {
-        let body = self
-            .client
-            .get(format!("{}/me", self.base_url))
-            .header("Authorization", format!("Bearer {}", &self.auth_token))
-            .send()
-            .await?
-            .text()
-            .await?;
-
-        Ok(body)
+        Letter {
+            id,
+            title,
+            created_at,
+            updated_at,
+            public_url,
+            status,
+            tags,
+            letter_type,
+            events,
+        }
     }
 
     pub async fn get_mail(&self) -> Result<Option<Vec<Letter>>, Error> {
@@ -146,69 +174,31 @@ impl MailClient {
         let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
 
         if let Ok(data) = data {
-            println!("{:#?}", data);
-            let mut mail = Vec::new();
+            let mut mail: Vec<Letter> = Vec::new();
 
             for letter in data.get("mail").unwrap().as_array().unwrap().iter() {
-                let id = if let Value::String(str) = &letter["id"] {
-                    Some(str.parse().unwrap())
-                } else {
-                    None
-                };
-                let title = if let Value::String(str) = &letter["title"] {
-                    Some(str.parse().unwrap())
-                } else {
-                    None
-                };
-                let created_at: Option<DateTime<Utc>> =
-                    if let Value::String(str) = &letter["created_at"] {
-                        Some(str.parse().unwrap())
-                    } else {
-                        None
-                    };
-                let updated_at: Option<DateTime<Utc>> =
-                    if let Value::String(str) = &letter["updated_at"] {
-                        Some(str.parse().unwrap())
-                    } else {
-                        None
-                    };
-                let public_url = if let Value::String(str) = &letter["public_url"] {
-                    Some(str.parse().unwrap())
-                } else {
-                    None
-                };
-                let letter_type = if let Value::String(str) = &letter["type"] {
-                    Some(str.parse().unwrap())
-                } else {
-                    None
-                };
-                let status = if let Value::String(str) = &letter["status"] {
-                    Some(str.parse().unwrap())
-                } else {
-                    None
-                };
-                let tags = if let Value::Array(tags) = &letter["tags"] {
-                    let mut tags_final = Vec::<String>::new();
-                    for tag in tags.iter() {
-                        tags_final.push(tag.to_string());
-                    }
-                    Some(tags_final)
-                } else {
-                    None
-                };
-
-                mail.push(Letter {
-                    id,
-                    title,
-                    created_at,
-                    updated_at,
-                    public_url,
-                    status,
-                    tags,
-                    letter_type,
-                });
+                mail.push(self.letter_from_data(letter));
             }
             Ok(Some(mail))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub async fn get_letter(&self, id: String) -> Result<Option<Letter>, Error> {
+        let body = self
+            .client
+            .get(format!("{}/letters/{}", self.base_url, id))
+            .bearer_auth(&self.auth_token)
+            .send()
+            .await?
+            .text()
+            .await?;
+
+        let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
+
+        if let Ok(data) = data {
+            Ok(Some(self.letter_from_data(&data["letter"])))
         } else {
             Ok(None)
         }
