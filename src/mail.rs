@@ -5,9 +5,9 @@ use serde_json::Value;
 
 pub struct MailClient {
     auth_token: String,
-    base: String,
+    pub base: String,
+    pub api_path: String,
     client: Client,
-    api_path: String,
 }
 
 // All of these are options cus letters don't follow a strict schema and sometimes are missing half
