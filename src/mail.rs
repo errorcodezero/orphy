@@ -282,11 +282,15 @@ impl MailClient {
                 None => "mail",
             };
 
-            for letter in data.get(name).unwrap().as_array().unwrap().iter() {
-                // unwrapping since this will not break on this
-                mail.push(self.letter_from_data(letter).unwrap());
+            if let Some(Value::Array(arr)) = data.get(name) {
+                for letter in arr.iter() {
+                    // unwrapping since this will not break on this
+                    mail.push(self.letter_from_data(letter).unwrap());
+                }
+                Ok(Some(mail))
+            } else {
+                Ok(None)
             }
-            Ok(Some(mail))
         } else {
             Ok(None)
         }

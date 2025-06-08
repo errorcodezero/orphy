@@ -1,4 +1,5 @@
 use clap::{Parser, ValueEnum};
+use serde::{Deserialize, Serialize};
 
 #[derive(ValueEnum, Clone)]
 pub enum MailType {
@@ -18,4 +19,18 @@ pub enum Cli {
         id: String,
     },
     Fetch,
+    Setup {
+        api_key: String,
+    },
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Config {
+    pub api_key: String,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self { api_key: "".into() }
+    }
 }
