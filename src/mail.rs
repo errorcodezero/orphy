@@ -1,3 +1,4 @@
+use crate::cli::MailType;
 use anyhow::Error;
 use chrono::prelude::*;
 use reqwest::Client;
@@ -226,22 +227,62 @@ impl MailClient {
         }
     }
 
-    pub async fn get_mail(&self) -> Result<Option<Vec<Letter>>, Error> {
-        let body = self
-            .client
-            .get(format!("{}/{}/mail", self.base, self.api_path))
-            .bearer_auth(&self.auth_token)
-            .send()
-            .await?
-            .text()
-            .await?;
+    pub async fn get_mail(
+        &self,
+        mail_type: Option<MailType>,
+    ) -> Result<Option<Vec<Letter>>, Error> {
+        let body = match mail_type {
+            Some(MailType::Legacy) => {
+                self.client
+                    .get(format!("{}/{}/lsv", self.base, self.api_path))
+                    .bearer_auth(&self.auth_token)
+                    .send()
+                    .await?
+                    .text()
+                    .await?
+            }
+            Some(MailType::Package) => {
+                self.client
+                    .get(format!("{}/{}/packages", self.base, self.api_path))
+                    .bearer_auth(&self.auth_token)
+                    .send()
+                    .await?
+                    .text()
+                    .await?
+            }
+            Some(MailType::Letter) => {
+                self.client
+                    .get(format!("{}/{}/letters", self.base, self.api_path))
+                    .bearer_auth(&self.auth_token)
+                    .send()
+                    .await?
+                    .text()
+                    .await?
+            }
+            _ => {
+                self.client
+                    .get(format!("{}/{}/mail", self.base, self.api_path))
+                    .bearer_auth(&self.auth_token)
+                    .send()
+                    .await?
+                    .text()
+                    .await?
+            }
+        };
 
         let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
 
         if let Ok(data) = data {
             let mut mail: Vec<Letter> = Vec::new();
 
-            for letter in data.get("mail").unwrap().as_array().unwrap().iter() {
+            let name = match mail_type {
+                Some(MailType::Letter) => "letters",
+                Some(MailType::Package) => "packages",
+                Some(MailType::Legacy) => "legacy_shipment_viewer_records",
+                None => "mail",
+            };
+
+            for letter in data.get(name).unwrap().as_array().unwrap().iter() {
                 // unwrapping since this will not break on this
                 mail.push(self.letter_from_data(letter).unwrap());
             }
