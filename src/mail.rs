@@ -207,6 +207,25 @@ impl MailClient {
         }
     }
 
+    pub async fn get_id(&self) -> Result<Option<String>, Error> {
+        let body = self
+            .client
+            .get(format!("{}/{}/me", self.base, self.api_path))
+            .bearer_auth(&self.auth_token)
+            .send()
+            .await?
+            .text()
+            .await?;
+
+        let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
+
+        if let Ok(data) = data {
+            Ok(Some(data["user"]["id"].to_string()))
+        } else {
+            Ok(None)
+        }
+    }
+
     pub async fn get_mail(&self) -> Result<Option<Vec<Letter>>, Error> {
         let body = self
             .client
