@@ -91,43 +91,52 @@ impl MailClient {
         }
     }
 
-    fn letter_from_data(&self, letter: &Value) -> Letter {
+    fn letter_from_data(&self, letter: &Value) -> Option<Letter> {
+        let mut letter_exists = false;
         let id = if let Value::String(str) = &letter["id"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let title = if let Value::String(str) = &letter["title"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let created_at: Option<DateTime<Utc>> = if let Value::String(str) = &letter["created_at"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let updated_at: Option<DateTime<Utc>> = if let Value::String(str) = &letter["updated_at"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let public_url = if let Value::String(str) = &letter["public_url"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let letter_type = if let Value::String(str) = &letter["type"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let status = if let Value::String(str) = &letter["status"] {
+            letter_exists = true;
             Some(str.parse().unwrap())
         } else {
             None
         };
         let tags = if let Value::Array(tags) = &letter["tags"] {
+            letter_exists = true;
             let mut tags_final = Vec::<String>::new();
             for tag in tags.iter() {
                 tags_final.push(tag.to_string());
@@ -138,6 +147,7 @@ impl MailClient {
         };
 
         let events = if let Value::Array(events) = &letter["events"] {
+            letter_exists = true;
             let mut events_final: Vec<Event> = Vec::new();
             for event in events {
                 events_final.push(self.event_from_data(event));
@@ -148,16 +158,20 @@ impl MailClient {
             None
         };
 
-        Letter {
-            id,
-            title,
-            created_at,
-            updated_at,
-            public_url,
-            status,
-            tags,
-            letter_type,
-            events,
+        if letter_exists {
+            Some(Letter {
+                id,
+                title,
+                created_at,
+                updated_at,
+                public_url,
+                status,
+                tags,
+                letter_type,
+                events,
+            })
+        } else {
+            None
         }
     }
 
@@ -177,7 +191,8 @@ impl MailClient {
             let mut mail: Vec<Letter> = Vec::new();
 
             for letter in data.get("mail").unwrap().as_array().unwrap().iter() {
-                mail.push(self.letter_from_data(letter));
+                // unwrapping since this will not break on this
+                mail.push(self.letter_from_data(letter).unwrap());
             }
             Ok(Some(mail))
         } else {
@@ -185,7 +200,7 @@ impl MailClient {
         }
     }
 
-    pub async fn get_letter(&self, id: String) -> Result<Option<Letter>, Error> {
+    pub async fn get_mail_by_id(&self, id: String) -> Result<Option<Letter>, Error> {
         let body = self
             .client
             .get(format!("{}/letters/{}", self.base_url, id))
@@ -198,7 +213,7 @@ impl MailClient {
         let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
 
         if let Ok(data) = data {
-            Ok(Some(self.letter_from_data(&data["letter"])))
+            Ok(self.letter_from_data(&data["letter"]))
         } else {
             Ok(None)
         }
