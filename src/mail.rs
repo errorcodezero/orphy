@@ -1,12 +1,13 @@
 use anyhow::Error;
 use chrono::prelude::*;
 use reqwest::Client;
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 pub struct MailClient {
     auth_token: String,
-    base_url: String,
+    base: String,
     client: Client,
+    api_path: String,
 }
 
 // All of these are options cus letters don't follow a strict schema and sometimes are missing half
@@ -22,6 +23,7 @@ pub struct Letter {
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
     pub events: Option<Vec<Event>>,
+    pub path: Option<String>,
 }
 
 // These don't seem to follow as much of an optional schema but i'm putting it here just in case
@@ -135,6 +137,12 @@ impl MailClient {
         } else {
             None
         };
+        let path = if let Value::String(str) = &letter["path"] {
+            letter_exists = true;
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
         let tags = if let Value::Array(tags) = &letter["tags"] {
             letter_exists = true;
             let mut tags_final = Vec::<String>::new();
@@ -169,6 +177,7 @@ impl MailClient {
                 tags,
                 letter_type,
                 events,
+                path,
             })
         } else {
             None
@@ -178,7 +187,7 @@ impl MailClient {
     pub async fn get_mail(&self) -> Result<Option<Vec<Letter>>, Error> {
         let body = self
             .client
-            .get(format!("{}/mail", self.base_url))
+            .get(format!("{}/{}/mail", self.base, self.api_path))
             .bearer_auth(&self.auth_token)
             .send()
             .await?
@@ -200,10 +209,10 @@ impl MailClient {
         }
     }
 
-    pub async fn get_mail_by_id(&self, id: String) -> Result<Option<Letter>, Error> {
+    pub async fn get_mail_by_path(&self, path: String) -> Result<Option<Letter>, Error> {
         let body = self
             .client
-            .get(format!("{}/letters/{}", self.base_url, id))
+            .get(format!("{}/{path}", self.base))
             .bearer_auth(&self.auth_token)
             .send()
             .await?
@@ -213,7 +222,15 @@ impl MailClient {
         let data: Result<Value, serde_json::Error> = serde_json::from_str(&body);
 
         if let Ok(data) = data {
-            Ok(self.letter_from_data(&data["letter"]))
+            if let Value::Object(_) = &data["letter"] {
+                Ok(self.letter_from_data(&data["letter"]))
+            } else if let Value::Object(_) = &data["package"] {
+                Ok(self.letter_from_data(&data["package"]))
+            } else if let Value::Object(_) = &data["legacy_shipment_viewer_record"] {
+                Ok(self.letter_from_data(&data["legacy_shipment_viewer_record"]))
+            } else {
+                Ok(None)
+            }
         } else {
             Ok(None)
         }
@@ -224,7 +241,8 @@ impl Default for MailClient {
     fn default() -> Self {
         Self {
             auth_token: String::new(),
-            base_url: String::from("https://mail.hackclub.com/api/public/v1"),
+            base: String::from("https://mail.hackclub.com"),
+            api_path: String::from("/api/public/v1/"),
             client: Client::new(),
         }
     }

@@ -3,7 +3,7 @@ use clap::Parser;
 use cli::Cli;
 use cli_table::{Cell, CellStruct, Table};
 use dotenv::dotenv;
-use mail::MailClient;
+use mail::{Letter, MailClient};
 
 mod cli;
 mod mail;
@@ -71,14 +71,29 @@ async fn main() -> Result<(), Error> {
                     println!("You don't have any mail!")
                 }
             } else {
-                eprintln!("There was an error!");
+                eprintln!("There was an error [1]!");
             }
         }
         Cli::View { id } => {
-            println!("Loading your letter...");
-            let letter = client.get_mail_by_id(id).await;
-            if let Ok(letter) = letter {
-                if let Some(letter) = letter {
+            println!("Loading your mail...");
+            let mail_list = client.get_mail().await;
+            let mut mail = Ok(Some(Letter::default()));
+            if let Ok(Some(mail_list)) = mail_list {
+                for current_mail in mail_list {
+                    if let Some(current_id) = current_mail.id {
+                        if current_id == id {
+                            if let Some(path) = current_mail.path {
+                                mail = client.get_mail_by_path(path).await;
+                                break;
+                            } else {
+                                eprintln!("There was an error [2]!");
+                            }
+                        }
+                    }
+                }
+            }
+            if let Ok(mail) = mail {
+                if let Some(letter) = mail {
                     let mut table: Vec<Vec<CellStruct>> = Vec::new();
                     if let Some(id) = letter.id {
                         table.push(vec!["ID".cell(), id.cell()]);
@@ -176,7 +191,7 @@ async fn main() -> Result<(), Error> {
                     eprintln!("Your letter does not exist!");
                 }
             } else {
-                eprintln!("There was an error!");
+                eprintln!("There was an error [3]!");
             }
         }
         Cli::Fetch => {
