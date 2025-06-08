@@ -119,6 +119,9 @@ async fn main() -> Result<(), Error> {
                     } else {
                         table.push(vec!["Type".cell(), "no type".cell()]);
                     }
+                    if let Some(letter_subtype) = letter.letter_subtype {
+                        table.push(vec!["Subtype".cell(), letter_subtype.cell()]);
+                    }
                     if let Some(status) = letter.status {
                         table.push(vec!["Status".cell(), status.cell()]);
                     } else {
@@ -131,13 +134,15 @@ async fn main() -> Result<(), Error> {
                     }
                     if let Some(updated_at) = letter.updated_at {
                         table.push(vec!["Updated At".cell(), updated_at.cell()]);
-                    } else {
-                        table.push(vec!["Updated At".cell(), "no update date".cell()]);
                     }
                     if let Some(public_url) = letter.public_url {
                         table.push(vec!["Public URL".cell(), public_url.cell()]);
-                    } else {
-                        table.push(vec!["Public URL".cell(), "no public url".cell()]);
+                    }
+                    if let Some(tracking_number) = letter.tracking_number {
+                        table.push(vec!["Tracking Number".cell(), tracking_number.cell()]);
+                    }
+                    if let Some(tracking_link) = letter.tracking_link {
+                        table.push(vec!["Tracking Link".cell(), tracking_link.cell()]);
                     }
 
                     let table = table.table().display().unwrap();

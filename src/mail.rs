@@ -1,7 +1,7 @@
 use anyhow::Error;
 use chrono::prelude::*;
 use reqwest::Client;
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 pub struct MailClient {
     auth_token: String,
@@ -17,6 +17,9 @@ pub struct Letter {
     pub id: Option<String>,
     pub title: Option<String>,
     pub letter_type: Option<String>,
+    pub letter_subtype: Option<String>,
+    pub tracking_number: Option<String>,
+    pub tracking_link: Option<String>,
     pub public_url: Option<String>,
     pub status: Option<String>,
     pub tags: Option<Vec<String>>,
@@ -131,6 +134,12 @@ impl MailClient {
         } else {
             None
         };
+        let letter_subtype = if let Value::String(str) = &letter["subtype"] {
+            letter_exists = true;
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
         let status = if let Value::String(str) = &letter["status"] {
             letter_exists = true;
             Some(str.parse().unwrap())
@@ -153,7 +162,18 @@ impl MailClient {
         } else {
             None
         };
-
+        let tracking_number = if let Value::String(str) = &letter["tracking_number"] {
+            letter_exists = true;
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
+        let tracking_link = if let Value::String(str) = &letter["tracking_link"] {
+            letter_exists = true;
+            Some(str.parse().unwrap())
+        } else {
+            None
+        };
         let events = if let Value::Array(events) = &letter["events"] {
             letter_exists = true;
             let mut events_final: Vec<Event> = Vec::new();
@@ -177,7 +197,10 @@ impl MailClient {
                 tags,
                 letter_type,
                 events,
+                letter_subtype,
                 path,
+                tracking_link,
+                tracking_number,
             })
         } else {
             None
