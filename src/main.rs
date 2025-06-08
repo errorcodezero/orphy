@@ -12,7 +12,7 @@ mod mail;
 async fn main() -> Result<(), Error> {
     dotenv().unwrap();
     let args = Cli::parse();
-    let client = MailClient::new(std::env::var("API_KEY").unwrap());
+    let client = MailClient::new(std::env::var("HACKCLUB_MAIL_API_KEY").unwrap());
 
     match args {
         Cli::Mail => {
