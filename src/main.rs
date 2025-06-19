@@ -1,6 +1,6 @@
 use anyhow::Error;
 use clap::Parser;
-use cli::{Cli, Config};
+use cli::{Cli, Config, MailType};
 use cli_table::{Cell, CellStruct, Table};
 use confy::{ConfyError, load, store};
 use mail::{Letter, MailClient};
@@ -246,6 +246,18 @@ async fn main() -> Result<(), Error> {
                 let letters = client.get_mail(None).await;
                 if let Ok(Some(letters)) = letters {
                     let first = letters.first();
+                    let mut letter_count = 0;
+                    let mut package_count = 0;
+                    let mut legacy_count = 0;
+                    letters.iter().for_each(|x| {
+                        if x.letter_type == Some(String::from("letter")) {
+                            letter_count += 1;
+                        } else if x.letter_type == Some(String::from("package")) {
+                            package_count += 1;
+                        } else {
+                            legacy_count += 1;
+                        }
+                    });
                     println!(
                         "
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡤⠶⠒⠛⠉⠙⠛⠒⠶⢤⣀⠀⠀⠀⠀⠀⠀
@@ -255,9 +267,9 @@ async fn main() -> Result<(), Error> {
 ⠘⢆⠉⠑⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢆⠁⣠⠎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣇ instance: {}
 ⠀⠈⠓⠦⠁⢀⣀⠀⠀⠀⠀⠀⠀⣀⣀⢸⡊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻ mail: {}
 ⠀⠀⠀⡸⠀⠉⠀⠙⠆⠀⠀⠀⠏⠀⠈⠀⢇⠀⠀⠀⠀⠀⠀⠀⢀⠔⠀⠀⠀⣼ {}
-⠀⠀⠀⠹⣄⠀⠠⣤⡡⠪⡭⠃⡤⢤⡄⡰⠋⠀⠀⠀⣀⡠⠴⠊⠁⠀⠀⠀⢠⠇
-⠀⠀⢠⢿⣠⠟⠓⠛⠉⠛⡟⠛⠛⠛⠛⠒⠒⠚⠉⠉⠁⠀⠀⠀⠀⠀⢀⡴⠋⠀
-⠀⠀⠈⠛⢯⣀⣀⣀⡤⠤⠤⠤⢤⣤⣀⣀⣀⣀⣀⣀⣀⣤⠤⠴⠒⠋⠁⠀⠀⠀
+⠀⠀⠀⠹⣄⠀⠠⣤⡡⠪⡭⠃⡤⢤⡄⡰⠋⠀⠀⠀⣀⡠⠴⠊⠁⠀⠀⠀⢠⠇ letters: {}
+⠀⠀⢠⢿⣠⠟⠓⠛⠉⠛⡟⠛⠛⠛⠛⠒⠒⠚⠉⠉⠁⠀⠀⠀⠀⠀⢀⡴⠋⠀ packages: {}
+⠀⠀⠈⠛⢯⣀⣀⣀⡤⠤⠤⠤⢤⣤⣀⣀⣀⣀⣀⣀⣀⣤⠤⠴⠒⠋⠁⠀⠀⠀ legacy: {}
 ",
                         if let Ok(Some(id)) = client.get_id().await {
                             format!("id: {id}")
@@ -273,7 +285,10 @@ async fn main() -> Result<(), Error> {
                             )
                         } else {
                             String::from("")
-                        }
+                        },
+                        letter_count,
+                        package_count,
+                        legacy_count
                     )
                 }
             } else {
