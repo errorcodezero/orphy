@@ -1,3 +1,6 @@
+use core::time;
+use std::thread::sleep;
+
 use anyhow::Error;
 use clap::Parser;
 use cli::{Cli, Config};
@@ -309,6 +312,80 @@ async fn main() -> Result<(), Error> {
             );
             println!("Created with <3 by ErrorCode0");
             println!("@errorcodezero on github")
+        }
+        Cli::Fun => {
+            let animation_frames: Vec<String> = vec![
+                String::from(
+                    "
+________               .__           
+\\_____  \\_____________ |  |__ ___.__.
+ /   |   \\_  __ \\____ \\|  |  <   |  |
+/    |    \\  | \\/  |_> >   Y  \\___  |
+\\_______  /__|  |   __/|___|  / ____|
+        \\/      |__|        \\/\\/     
+",
+                ),
+                String::from(
+                    "
+ _______  _______  _______                   
+(  ___  )(  ____ )(  ____ )|\\     /||\\     /|
+| (   ) || (    )|| (    )|| )   ( |( \\   / )
+| |   | || (____)|| (____)|| (___) | \\ (_) / 
+| |   | ||     __)|  _____)|  ___  |  \\   /  
+| |   | || (\\ (   | (      | (   ) |   ) (   
+| (___) || ) \\ \\__| )      | )   ( |   | |   
+(_______)|/   \\__/|/       |/     \\|   \\_/   
+
+",
+                ),
+                String::from(
+                    "The story of the existence of this command is one of intense emotion. You may cry, whine, program a little, but know that you will come out of it a better person.",
+                ),
+                String::from(
+                    "It all started in 2025 when a young programmer going by the online pseudonym of ErrorCode0 decided that he'd like to participate in a strange online hackathon named Shipwrecked.",
+                ),
+                String::from(
+                    "This young but enthusiastic programmer decided to get right to work and began working on four projects of which needed to comprise of 15 hours per in order to make it to this strange island-based hackathon.",
+                ),
+                String::from(
+                    "His forth project was a 16-bit custom CPU architecture he had built as well as a virtual machine to go along with it.",
+                ),
+                String::from(
+                    "
+           Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral. 
+                    "),
+                String::from("
+As it was his turn to speak, he stuttered. He realized that the audience wasn't right. These were webdevs... not low level enthusiasts like he had been. They didn't quite see the appeal of the 16-bit cpu as much as he did.
+"),
+                String::from("He walked out of that ship showcase determined thinking that even if he wouldn't win on this, he still had the option of virality at hand"),
+                String::from(
+                    "He realized that he needed to make one of his apps go viral on some social media site. The young entrepreneur chose Hacker news with a fallback of Github for virality in order to try to push his project outwards.",
+                ),
+                String::from(
+                    "Despite his valient endeavors, even going up to the point of publishing an entire technical writeup of the project on his blog, he failed to have it gain much traction and reach the virality requirement.",
+                ),
+                String::from(
+                    "Out of desperation, he begged the organizers to allow him an exception: \"B-B-But it hit the front page of the Show HN page... That's gotta count for something r-r-right?!\"",
+                ),
+                String::from(
+                    "The organizer laughed, \"You pitiful creature, we only take the main front page for virality\"",
+                ),
+                String::from(
+                    "
+                    He fell back to the ground in shock, his ears ringing with pain and that line replaying in his head over and over again like a broken record. He clutched his fist in determination realizing what his final shot would come to.  
+                "),
+                    String::from("He looked for anything... desperate for what could allow him to finish all his projects in time. He searched and searched and ran his eyes dry until finally he discovered a loophole. The projects didn't technically need to be finished, but rather they would need to be in a functional state."),
+                String::from("The young error code dashed to submit his projects after trying to wrap up what functional state he believed they were in. That island was finally in reach."),
+                String::from("After submitting everything and realizing it was all in order, he stared upwards at the 95%. \"95? Why am I behind by just 5%?\". He looked around and around until he saw his project orpheus. He realized he only had 12 out of the 15 hours required for orpheus."),
+                String::from("Desperate for just three more hours added to his count, he looked for any features to add to the project."),
+                String::from("He settled on writing this command..."),
+                String::from("Based on a true story. Shipwrecked admins pls accept this.")
+                ,
+            ];
+            for animation in animation_frames {
+                println!("{}", animation);
+                sleep(time::Duration::from_secs(4));
+            }
         }
     }
     Ok(())
