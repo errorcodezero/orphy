@@ -351,11 +351,9 @@ ________               .__
                     "His forth project was a 16-bit custom CPU architecture he had built as well as a virtual machine to go along with it.",
                 ),
                 String::from(
-                    "
-           Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral. 
+                    "Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral. 
                     "),
-                String::from("
-As it was his turn to speak, he stuttered. He realized that the audience wasn't right. These were webdevs... not low level enthusiasts like he had been. They didn't quite see the appeal of the 16-bit cpu as much as he did.
+                String::from("As it was his turn to speak, he stuttered. He realized that the audience wasn't right. These were webdevs... not low level enthusiasts like he had been. They didn't quite see the appeal of the 16-bit cpu as much as he did.
 "),
                 String::from("He walked out of that ship showcase determined thinking that even if he wouldn't win on this, he still had the option of virality at hand"),
                 String::from(
@@ -370,17 +368,23 @@ As it was his turn to speak, he stuttered. He realized that the audience wasn't 
                 String::from(
                     "The organizer laughed, \"You pitiful creature, we only take the main front page for virality\"",
                 ),
-                String::from(
-                    "
-                    He fell back to the ground in shock, his ears ringing with pain and that line replaying in his head over and over again like a broken record. He clutched his fist in determination realizing what his final shot would come to.  
-                "),
+                String::from("He fell back to the ground in shock, his ears ringing with pain and that line replaying in his head over and over again like a broken record. He clutched his fist in determination realizing what his final shot would come to."),
                     String::from("He looked for anything... desperate for what could allow him to finish all his projects in time. He searched and searched and ran his eyes dry until finally he discovered a loophole. The projects didn't technically need to be finished, but rather they would need to be in a functional state."),
                 String::from("The young error code dashed to submit his projects after trying to wrap up what functional state he believed they were in. That island was finally in reach."),
                 String::from("After submitting everything and realizing it was all in order, he stared upwards at the 95%. \"95? Why am I behind by just 5%?\". He looked around and around until he saw his project orpheus. He realized he only had 12 out of the 15 hours required for orpheus."),
                 String::from("Desperate for just three more hours added to his count, he looked for any features to add to the project."),
                 String::from("He settled on writing this command..."),
-                String::from("Based on a true story. Shipwrecked admins pls accept this.")
+                String::from("Based on a true story. Shipwrecked admins pls accept this."),
+                String::from("PART 2:"),
+                String::from("The confident ErrorCode0 stepped up to the mighty platform upon which the shipwrecked organizers rested upon."),
+                String::from("He tapped his foot on the ground, in that same rhythmic fashion as one would knock on a door with.")
                 ,
+                String::from("The towering shipwrecked organizer awoke from his slumber: \"WHO DARES AWAKE ME FROM MY SLUMBER\""),
+                String::from("The young programmer got onto a knee and said \"My lord, please accept my humble request of a rounding of my hours on my project of name Orphy. I have exceeded the count of hours within all my other projects by a surplus of nearing 20 per! Please my lord"),
+                String::from("The shipwrecked organizer laughed a hearty and evil chuckle. \"You stupid mortal. I will not do that for that is FRAUD. You don't want to be banned from this event for fraud would you?\" He picked up the young programmer."),
+                String::from("\"I don't want to see you here until 15 hours no less has been reached by your puny project. Have we come to an understanding, or do more... serious measures need to be taken into account\""),
+                String::from("The bumbling giant dropped the young programmer down into sea of piracy. He came to realize that he would need more than a humble request to persuade the organizer."),
+                String::from("The humble programmer peered into his hackatime stats to no avail. He had only accumulated 14 hours and 4 minutes of the required time he would need. He wouldn't make it onto this hackathon unless a miracle took place.")
             ];
             for animation in animation_frames {
                 println!("{}", animation);
