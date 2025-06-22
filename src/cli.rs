@@ -22,6 +22,7 @@ pub enum Cli {
     Setup {
         api_key: String,
     },
+    Credit,
 }
 
 #[derive(Serialize, Deserialize)]

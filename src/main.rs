@@ -1,6 +1,6 @@
 use anyhow::Error;
 use clap::Parser;
-use cli::{Cli, Config, MailType};
+use cli::{Cli, Config};
 use cli_table::{Cell, CellStruct, Table};
 use confy::{ConfyError, load, store};
 use mail::{Letter, MailClient};
@@ -12,7 +12,6 @@ mod mail;
 async fn main() -> Result<(), Error> {
     let cfg: Result<Config, ConfyError> = load("orphy_hackclub_mail_client", None);
     let args = Cli::parse();
-    // let client = MailClient::new(cfg.api_key);
 
     match args {
         Cli::Setup { api_key } => {
@@ -296,6 +295,20 @@ async fn main() -> Result<(), Error> {
                     "You don't have an api key! Run orphy setup [your api key] with your api key."
                 )
             }
+        }
+        Cli::Credit => {
+            println!(
+                "
+███████╗██████╗ ██████╗  ██████╗ ██████╗  ██████╗ ██████╗ ██████╗ ███████╗ ██████╗ 
+██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔═████╗
+█████╗  ██████╔╝██████╔╝██║   ██║██████╔╝██║     ██║   ██║██║  ██║█████╗  ██║██╔██║
+██╔══╝  ██╔══██╗██╔══██╗██║   ██║██╔══██╗██║     ██║   ██║██║  ██║██╔══╝  ████╔╝██║
+███████╗██║  ██║██║  ██║╚██████╔╝██║  ██║╚██████╗╚██████╔╝██████╔╝███████╗╚██████╔╝
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝ ╚═════╝ 
+"
+            );
+            println!("Created with <3 by ErrorCode0");
+            println!("@errorcodezero on github")
         }
     }
     Ok(())
