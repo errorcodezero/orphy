@@ -351,8 +351,7 @@ ________               .__
                     "His forth project was a 16-bit custom CPU architecture he had built as well as a virtual machine to go along with it.",
                 ),
                 String::from(
-                    "Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral. 
-                    "),
+                    "Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral."),
                 String::from("As it was his turn to speak, he stuttered. He realized that the audience wasn't right. These were webdevs... not low level enthusiasts like he had been. They didn't quite see the appeal of the 16-bit cpu as much as he did.
 "),
                 String::from("He walked out of that ship showcase determined thinking that even if he wouldn't win on this, he still had the option of virality at hand"),
@@ -366,7 +365,7 @@ ________               .__
                     "Out of desperation, he begged the organizers to allow him an exception: \"B-B-But it hit the front page of the Show HN page... That's gotta count for something r-r-right?!\"",
                 ),
                 String::from(
-                    "The organizer laughed, \"You pitiful creature, we only take the main front page for virality. I am nothing if not a merciful man. I will give you 1 week to finish every last project and if it is done, I will waive the virality. Work fast.\".",
+                    "The organizer laughed, \"You pitiful creature, we only take the main front page for virality. I am nothing if not a merciful man. I will give you 1 week to finish every last project and if it is done, I will waive the virality. Work fast.\""
                 ),
                 String::from("He fell back to the ground in shock, his ears ringing with pain and that line replaying in his head over and over again like a broken record. He clutched his fist in determination realizing what his final shot would come to."),
                     String::from("He looked for anything... desperate for what could allow him to finish all his projects in time. He searched and searched and ran his eyes dry until finally he discovered a loophole. The projects didn't technically need to be finished, but rather they would need to be in a functional state."),
@@ -385,7 +384,8 @@ ________               .__
                 String::from("\"I don't want to see you here until 15 hours no less has been reached by your puny project. Have we come to an understanding, or do more... serious measures need to be taken into account\""),
                 String::from("The bumbling giant dropped the young programmer down into sea of piracy. He came to realize that he would need more than a humble request to persuade the organizer."),
                 String::from("The humble programmer peered into his hackatime stats to no avail. He had only accumulated 14 hours and 4 minutes of the required time he would need. He wouldn't make it onto this hackathon unless a miracle took place."),
-                String::from("Is this the end for our young ErrorCode0's journey?")
+                String::from("Is this the end for our young ErrorCode0's journey?"),
+                String::from("He worked tirelessly to stretch his time to the 15 hour mark. Useless feature here, unecessary story there, but it was tireless work. This last hour felt more demanding than all that had come before it and it certainly required much of him.")
             ];
             for animation in animation_frames {
                 println!("{}", animation);
