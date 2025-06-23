@@ -353,7 +353,7 @@ ________               .__
                 String::from(
                     "Initially, his efforts of virality focused upon trying to win the alluring ship showcase, in which contestants would come together and battle in a showcase of projects, attempting to best one another in having the most well recieved projects, of which top 3 would be automatically considered viral."),
                 String::from("As it was his turn to speak, he stuttered. He realized that the audience wasn't right. These were webdevs... not low level enthusiasts like he had been. They didn't quite see the appeal of the 16-bit cpu as much as he did.
-"),
+            "),
                 String::from("He walked out of that ship showcase determined thinking that even if he wouldn't win on this, he still had the option of virality at hand"),
                 String::from(
                     "He realized that he needed to make one of his apps go viral on some social media site. The young entrepreneur chose Hacker news with a fallback of Github for virality in order to try to push his project outwards.",
@@ -385,7 +385,12 @@ ________               .__
                 String::from("The bumbling giant dropped the young programmer down into sea of piracy. He came to realize that he would need more than a humble request to persuade the organizer."),
                 String::from("The humble programmer peered into his hackatime stats to no avail. He had only accumulated 14 hours and 4 minutes of the required time he would need. He wouldn't make it onto this hackathon unless a miracle took place."),
                 String::from("Is this the end for our young ErrorCode0's journey?"),
-                String::from("He worked tirelessly to stretch his time to the 15 hour mark. Useless feature here, unecessary story there, but it was tireless work. This last hour felt more demanding than all that had come before it and it certainly required much of him.")
+                String::from("He worked tirelessly to stretch his time to the 15 hour mark. Useless feature here, unecessary story there, but it was tireless work. This last hour felt more demanding than all that had come before it and it certainly required much of him."),
+                String::from("Slowly the time ticked up. Hackatime began reporting his time slowly increasing as he typed on and on yapping and yapping."),
+                String::from("His mind slowly began to blank. What else could he write about? There was literally nothing else he could say. He had yapped away for nearly a century at this point and yet the 1 final hour still had not been reached."),
+                String::from("Perhaps if the requirements were a bit less stringent he would have a choice."),
+                String::from("He isn't as lucky as he would hope unfortunately."),
+                String::from("Part 3:")
             ];
             for animation in animation_frames {
                 println!("{}", animation);
